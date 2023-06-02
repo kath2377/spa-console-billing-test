@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/MerchantData",
+  "title": "MerchantData",
+  "type": "object",
+  "additionalProperties": true,
+  "definitions": {
+    "statusSteps": {
+      "type": "string",
+      "enum": ["pending", "inProcess", "complete", "omitted", "blocked"],
+      "title": "statusSteps"
+    },
+    "namePerson": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "lastname": {
+          "type": "string"
+        }
+      },
+      "title": "namePerson"
+    },
+    "sat": {
+      "type": "object",
+      "properties": {
+        "zipCode": {
+          "type": "string"
+        },
+        "cologne": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "stateCode": {
+          "type": "string"
+        },
+        "populationCode": {
+          "type": "string"
+        },
+        "countryCode": {
+          "type": "string"
+        },
+        "areaCode": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        }
+      },
+      "title": "sat"
+    },
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "title": "contact"
+    },
+    "accountInfo": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bankOfOrigin": {
+          "type": "string"
+        },
+        "interbankAccountCode": {
+          "type": "string"
+        },
+        "accountOrder": {
+          "type": "string",
+          "enum": ["principal", "alternate"]
+        },
+        "bankId": {
+          "type": "string"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "accountNumber": {
+          "type": "string"
+        },
+        "accountType": {
+          "type": "string"
+        },
+        "nameBeneficiary": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "codeSwift": {
+          "type": "string"
+        },
+        "codeIban": {
+          "type": "string"
+        },
+        "codeABA": {
+          "type": "string"
+        }
+      },
+      "title": "accountInfo"
+    },
+    "contactPerson": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "title": "contactPerson"
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "publicMerchantId": {
+          "type": "string"
+        },
+        "configId": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "merchantType": {
+          "type": "string"
+        },
+        "documentType": {
+          "type": "string"
+        },
+        "taxId": {
+          "type": "string"
+        },
+        "socialReason": {
+          "type": "string"
+        },
+        "naturalPerson": {
+          "$ref": "#/definitions/namePerson"
+        },
+        "mcc": {
+          "type": "string"
+        },
+        "economicActivityId": {
+          "type": "string"
+        },
+        "industryType": {
+          "type": "string"
+        },
+        "constitutionDate": {
+          "type": "number"
+        },
+        "webSite": {
+          "type": "string"
+        },
+        "companyType": {
+          "type": "string"
+        },
+        "gracePeriod": {
+          "type": "number"
+        }
+      },
+      "required": ["publicMerchantId", "configId", "country", "merchantType"],
+      "type": "object",
+      "additionalProperties": true
+    }
+  ]
+}

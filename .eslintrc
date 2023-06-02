@@ -1,0 +1,78 @@
+{
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "ignorePatterns": [
+    "src/environments",
+    "src/theme.ts",
+    "src/types",
+    "src/schema",
+    "src/assets",
+    "jest.config.js",
+    "jest.global.jsx",
+    "webpack.config.js",
+    "**/*.css",
+    "**/*.svg",
+    "**/*.png",
+    "**/*.jpg",
+    "**/*.styles.*"
+  ],
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "globals": {
+    "Atomics": "readonly",
+    "SharedArrayBuffer": "readonly"
+  },
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint", "react-hooks"],
+  "rules": {
+    "quotes": ["error", "double"],
+    "semi": ["error", "always"],
+    "no-unused-vars": ["off"],
+    "no-undef": ["off"],
+    "react/display-name": ["off"],
+    "@typescript-eslint/no-explicit-any": ["warn"],
+    "@typescript-eslint/no-unused-vars": ["error"],
+    "sort-keys": [
+      "error",
+      "asc",
+      { "caseSensitive": false, "natural": false, "minKeys": 2 }
+    ],
+    "@typescript-eslint/no-use-before-define": "error",
+    "no-var": "error",
+    "sort-imports": [
+      "error",
+      {
+        "ignoreCase": true,
+        "ignoreDeclarationSort": true,
+        "ignoreMemberSort": false,
+        "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+      }
+    ],
+    "newline-after-var": "error",
+    "newline-before-return": "error",
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ]
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  }
+}

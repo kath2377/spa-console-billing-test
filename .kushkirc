@@ -1,0 +1,8 @@
+{
+  "json2ts":{
+    "output": "./types",
+    "dirs": [
+      "src/schema"
+    ]
+  }
+}

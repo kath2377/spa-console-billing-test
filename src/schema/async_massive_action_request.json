@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/AsyncMassiveActionRequest",
+  "title": "AsyncMassiveActionRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "managementType": {
+      "type": "string",
+      "enum": ["DECENTRALIZE", "CENTRALIZE"]
+    },
+    "configuration": {
+      "type": "string"
+    },
+    "nodeId": {
+      "type": "string"
+    },
+    "childNodesId": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["managementType", "configuration", "nodeId", "childNodesId"]
+}

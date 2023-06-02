@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/AsyncMassiveActionResponse",
+  "title": "AsyncMassiveActionResponse",
+  "type": "object",
+  "additionalProperties": true,
+  "properties": {
+    "statusCode": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/GetNodeInfoResponse",
+  "title": "GetNodeInfoResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "definitions": {
+    "generalInfo": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        },
+        "operationalCountry": {
+          "type": "string"
+        },
+        "publicMerchantId": {
+          "type": "string"
+        },
+        "clientType": {
+          "type": "string"
+        }
+      },
+      "title": "generalInfo"
+    },
+    "configs": {
+      "type": "object",
+      "properties": {
+        "configuration": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "centralizedNodesId": {
+          "type": "string"
+        }
+      },
+      "title": "configs"
+    }
+  },
+  "properties": {
+    "nodeId": {
+      "type": "string"
+    },
+    "configCoreId": {
+      "type": "string"
+    },
+    "entityName": {
+      "type": "string"
+    },
+    "rootId": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "merchantId": {
+      "type": "string"
+    },
+    "countryCode": {
+      "type": "string"
+    },
+    "generalInfo": {
+      "$ref": "#/definitions/generalInfo"
+    },
+    "configs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/configs"
+      }
+    }
+  },
+  "required": [
+    "configCoreId"
+  ]
+}

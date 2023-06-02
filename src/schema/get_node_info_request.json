@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://ksh/GetNodeInfoRequest",
+  "title": "GetNodeInfoRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "publicMerchantId": {
+      "type": "string"
+    },
+    "configIds": {
+      "type": "string"
+    }
+  },
+  "required": ["publicMerchantId"]
+}
