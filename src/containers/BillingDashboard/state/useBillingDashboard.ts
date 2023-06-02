@@ -64,6 +64,9 @@ const TEMPLATE_QUERY = gql`
       kind
       transaction_type
       status
+      total_transactions
+      total_amount_trx
+      cycle
     }
   }
 `;
@@ -108,10 +111,10 @@ export const useBillingDashboard =
               {
                 props: {
                   cellProps: {
-                    align: "left",
+                    align: "center",
                     spacing: 1,
                   },
-                  line1: defaultTo(Number(d["amount"]), 0).toFixed(2),
+                  line1: d["total_transactions"],
                   type: "oneLine",
                 },
                 type: "TEXT",
@@ -122,10 +125,7 @@ export const useBillingDashboard =
                     align: "left",
                     spacing: 1,
                   },
-                  line1: defaultTo(
-                    Number(d["iva_kushki_commission"]),
-                    0
-                  ).toFixed(2),
+                  line1: defaultTo(Number(d["total_amount_trx"]), 0).toFixed(2),
                   type: "oneLine",
                 },
                 type: "TEXT",
@@ -147,19 +147,10 @@ export const useBillingDashboard =
               {
                 props: {
                   cellProps: {
-                    spacing: 1,
-                  },
-                  text: d["kind"],
-                },
-                type: "TAG",
-              },
-              {
-                props: {
-                  cellProps: {
                     align: "left",
                     spacing: 1,
                   },
-                  line1: d["transaction_type"],
+                  line1: d["cycle"],
                   type: "oneLine",
                 },
                 type: "TEXT",
@@ -169,7 +160,7 @@ export const useBillingDashboard =
                   cellProps: {
                     spacing: 1,
                   },
-                  color: "success",
+                  color: d["status"] === "completed" ? "success" : "error",
                   text: d["status"],
                 },
                 type: "TAG",
