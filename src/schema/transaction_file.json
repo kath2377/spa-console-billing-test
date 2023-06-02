@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "ITransactionFile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["totalRecords", "totalProcessed"],
+  "properties": {
+    "url": {
+      "description": "URL to download the file",
+      "type": "string"
+    },
+    "totalRecords": {
+      "description": "Number of total transactions in file",
+      "type": "integer"
+    },
+    "totalProcessed": {
+      "description": "Total of transactions already processed",
+      "type": "number"
+    }
+  }
+}

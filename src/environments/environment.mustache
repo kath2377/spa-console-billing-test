@@ -5,9 +5,25 @@ kushkiUrl: string;
 webSocketMassiveUrl: string;
 envName: string;
 devTools: boolean;
+firebaseConfig: {
+apiKey: string;
+authDomain: string;
+databaseURL: string;
+projectId: string;
+storageBucket: string;
+messagingSenderId: string;
+};
 } = {
 kushkiUrl: "{{{KUSHKI_URL}}}",
 webSocketMassiveUrl: "{{{KUSHKI_URL_WS}}}",
 envName: "{{{ENVNAME}}}",
 devTools: false,
+firebaseConfig: {
+apiKey:'{{{FIREBASE_APIKEY}}}',
+authDomain:'{{{FIREBASE_AUTHDOMAIN}}}',
+databaseURL: '{{{FIREBASE_DATABASEURL}}}',
+projectId: '{{{FIREBASE_PROJECTID}}}',
+storageBucket: '{{{FIREBASE_STORAGEBUCKET}}}',
+messagingSenderId: '{{{FIREBASE_MESSAGINGSENDERID}}}'
+},
 };

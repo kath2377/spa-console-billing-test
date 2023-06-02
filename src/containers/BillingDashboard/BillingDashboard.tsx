@@ -7,10 +7,10 @@ import {
   Title,
 } from "@kushki/connect-ui";
 import { Box } from "@mui/material";
-import {useBillingDashboard} from "./state/useBillingDashboard";
+import { useBillingDashboard } from "./state/useBillingDashboard";
 
 const BillingDashboard: FC = () => {
-  const {tableRows} = useBillingDashboard();
+  const { tableRows, downloadFile } = useBillingDashboard();
 
   return (
     <>
@@ -35,10 +35,14 @@ const BillingDashboard: FC = () => {
             <SplitButton
               icon={<IconDownload />}
               items={[
-                { id: "1", text: "Descargar con .csv" },
-                { id: "2", text: "Descargar con .xls" },
+                { id: "1", text: "Descargar en .csv" },
+                { id: "2", text: "Descargar en .txt" },
               ]}
-              onItemSelected={function noRefCheck() {}}
+              onItemSelected={({ id }) =>
+                id === "1"
+                  ? downloadFile("csv", ["test"])
+                  : downloadFile("txt", ["test"])
+              }
               size="small"
               text="Descargar"
               type="default"

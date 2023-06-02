@@ -1,54 +1,22 @@
-import { Configs } from "../../../shared/interfaces/centralizeNodeRequest.interface";
-import { Filters } from "../../../shared/interfaces/filter.interfaces";
-import { MerchantNodeData } from "../../../store/reducers/infoBranches/infoBranches.slice";
 import {
-  IPaginationProps,
-  ITableRowProps,
-} from "../../../components/Table/TableSimple/interfaces";
-import { UseFormReturn } from "react-hook-form";
+  getBillingFile,
+  getFirebaseId,
+} from "../../../store/thunks/general/general.thunk";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks/storeHook";
+import { ITableRowProps } from "@kushki/connect-ui/dist/Components/Organism/Table/TableSimple/interfaces";
+import { useEffect } from "react";
+import { isEmpty } from "lodash";
+import { RootState } from "../../../store/interfaces/store.interfaces";
 
-export interface IMerchantCentralization {
-  searchParameter: string;
+export interface IUseBilingDashboard {
+  downloadFile: (format: string, selectedTransactions: any[]) => void;
+  tableRows: ITableRowProps[];
 }
 
-export interface IUseBasicMerchantCentralization {
-  handleSelectedRows: (rowsSelected: MerchantNodeData[]) => void;
-  emptyRows: number;
-  selectRow: string[];
-  isCentralized: boolean;
-  isDescentralized: boolean;
-  disableDecentralization: boolean;
-  isLoadingDecentralized: boolean;
-  buildbodyCentralization: () => void;
-  decentralizationBranch: () => void;
-  decentralizationModalText: string;
-  isLoadingModal: boolean;
-  setSelectedRows: (row: number) => void;
-  openModalCentralization: boolean;
-  openModalDecentralization: boolean;
-  paginationProps: IPaginationProps;
-  rows: ITableRowProps[];
-  searchMerchantNodeFilter: (filters: Filters[]) => void;
-  setOpenModalCentralization: (alertState: boolean) => void;
-  setOpenModalDecentralization: (alertState: boolean) => void;
-  numberBranchesSelected: number;
-  customerInfo: {
-    constitutionalCountry: string;
-    publicMerchantId: string;
-    name: string;
-  };
-  filterByNameBranchId: () => void;
-  form: UseFormReturn<IMerchantCentralization>;
-  isCustomerComplete: boolean;
-}
-export interface Branch {
-  nodeId: string;
-  merchantId: string;
-  configs: Configs[];
-}
-
-export const useBillingDashboard = (): IUseBasicMerchantCentralization => {
-  const tableRows = [
+export const useBillingDashboard = (): IUseBilingDashboard => {
+  const dispatch = useAppDispatch();
+  const { firebaseId } = useAppSelector((state: RootState) => state.app);
+  const tableRows: ITableRowProps[] = [
     {
       cells: [
         {
@@ -122,6 +90,7 @@ export const useBillingDashboard = (): IUseBasicMerchantCentralization => {
       },
     },
   ];
+
   tableRows.push(tableRows[0]);
   tableRows.push(tableRows[0]);
   tableRows.push(tableRows[0]);
@@ -130,5 +99,44 @@ export const useBillingDashboard = (): IUseBasicMerchantCentralization => {
   tableRows.push(tableRows[0]);
   tableRows.push(tableRows[0]);
 
-  return { tableRows };
+  useEffect(() => {
+    if (!isEmpty(firebaseId)) {
+      dispatch(getBillingFile(firebaseId));
+    }
+  }, [firebaseId]);
+
+  const downloadFile = (format: string, selectedTransactions: any[]): void => {
+    const requestIds: string[] = [];
+
+    if (selectedTransactions) {
+      selectedTransactions?.forEach(
+        (transaction: { transaction_id: string }) => {
+          if (transaction.transaction_id !== undefined)
+            requestIds.push(transaction.transaction_id);
+        }
+      );
+    }
+
+    dispatch(
+      getFirebaseId({
+        body: {
+          country: "Ecuador",
+          filter: {
+            kind: "invoice|charge|dispersion",
+          },
+          format: format,
+          from: "2023-05-03",
+          limit: 500,
+          offset: 0,
+          requestIds: [
+            "b870c344-8753-4ffc-b01c-882e061de4ab",
+            "a25c64e7-2af1-4d45-90e5-35a8037c7d71",
+          ],
+          to: "2023-06-02",
+        },
+      })
+    );
+  };
+
+  return { downloadFile, tableRows };
 };

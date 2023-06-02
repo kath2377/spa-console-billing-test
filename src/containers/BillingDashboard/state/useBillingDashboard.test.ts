@@ -36,8 +36,7 @@ jest.mock("@kushki/connect-ui", () => ({
 
 describe("useBillingDashboard tests - ", () => {
   let dispatchMock: jest.Mock;
-  const renderCustomHook = () =>
-    renderHook(() => useBillingDashboard());
+  const renderCustomHook = () => renderHook(() => useBillingDashboard());
 
   const mockDispatch = () => {
     const dispatch = jest.fn();

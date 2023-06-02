@@ -8,7 +8,6 @@ import MainContainer from "./containers/MainContainer/MainContainer";
 import { Routes } from "./shared/constants/routes";
 
 import { store } from "./store/store";
-import { JwtComponent } from "./shared/useJWTUtils";
 import { ModuleSecurityWrapper } from "@kushki/security-wrapper";
 import { environment } from "./environments/environment";
 import { M_CLIENTS } from "./shared/constants/labels/main_containter_labels";
@@ -27,7 +26,6 @@ const Root = () => {
         }
       </style>
       <Provider store={store}>
-        <JwtComponent />
         <ThemeProvider theme={theme}>
           <SnackBarProvider>
             <BrowserRouter basename={"/billing"}>
