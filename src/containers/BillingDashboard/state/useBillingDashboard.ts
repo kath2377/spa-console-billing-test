@@ -1,56 +1,19 @@
-import { Configs } from "../../../shared/interfaces/centralizeNodeRequest.interface";
-import { Filters } from "../../../shared/interfaces/filter.interfaces";
-import { MerchantNodeData } from "../../../store/reducers/infoBranches/infoBranches.slice";
-import {
-  IPaginationProps,
-  ITableRowProps,
-} from "../../../components/Table/TableSimple/interfaces";
-import { UseFormReturn } from "react-hook-form";
 import { gql, useLazyQuery } from "@apollo/client";
-import { defaultTo } from "lodash";
+import { defaultTo, isEmpty } from "lodash";
 import { useEffect, useState } from "react";
+import {
+  getBillingFile,
+  getFirebaseId,
+} from "../../../store/thunks/general/general.thunk";
+import { useAppDispatch, useAppSelector } from "../../../store/hooks/storeHook";
+import { ITableRowProps } from "@kushki/connect-ui/dist/Components/Organism/Table/TableSimple/interfaces";
+import { RootState } from "../../../store/interfaces/store.interfaces";
 
-export interface IMerchantCentralization {
-  searchParameter: string;
-}
-
-export interface IUseBasicMerchantCentralization {
-  handleSelectedRows: (rowsSelected: MerchantNodeData[]) => void;
-  emptyRows: number;
-  selectRow: string[];
-  isCentralized: boolean;
-  isDescentralized: boolean;
-  disableDecentralization: boolean;
-  isLoadingDecentralized: boolean;
-  buildbodyCentralization: () => void;
-  decentralizationBranch: () => void;
-  decentralizationModalText: string;
-  isLoadingModal: boolean;
-  setSelectedRows: (row: number) => void;
-  openModalCentralization: boolean;
-  openModalDecentralization: boolean;
-  paginationProps: IPaginationProps;
-  rows: ITableRowProps[];
-  searchMerchantNodeFilter: (filters: Filters[]) => void;
-  setOpenModalCentralization: (alertState: boolean) => void;
-  setOpenModalDecentralization: (alertState: boolean) => void;
-  numberBranchesSelected: number;
-  customerInfo: {
-    constitutionalCountry: string;
-    publicMerchantId: string;
-    name: string;
-  };
-  filterByNameBranchId: () => void;
-  form: UseFormReturn<IMerchantCentralization>;
-  isCustomerComplete: boolean;
+export interface IUseBilingDashboard {
+  downloadFile: (format: string, selectedTransactions: any[]) => void;
   tableRows: ITableRowProps[];
   allowSelection: boolean;
   handleGetGqlData: () => void;
-}
-export interface Branch {
-  nodeId: string;
-  merchantId: string;
-  configs: Configs[];
 }
 
 const TEMPLATE_QUERY = gql`
@@ -72,18 +35,21 @@ const TEMPLATE_QUERY = gql`
 `;
 
 export const useBillingDashboard =
-  (): Partial<IUseBasicMerchantCentralization> => {
+  (): Partial<IUseBilingDashboard> => {
     const [getResult, { called, loading, error, data }] =
       useLazyQuery(TEMPLATE_QUERY);
+    const dispatch = useAppDispatch();
     const [tableRows, setTableRows] = useState<ITableRowProps[]>([]);
     const [allowSelection, setAllowSelection] = useState<boolean>(false);
+    const { firebaseId } = useAppSelector((state: RootState) => state.app);
     const getGLQData = (): void => {
       getResult();
       if (!called || loading || error) return;
       const tableRows: ITableRowProps[] = [];
 
+
       defaultTo(data.getBills, []).forEach((d: object, index: number) => {
-        const tableRowsAux = [
+        const tableRowsAux: ITableRowProps[] = [
           {
             cells: [
               {
@@ -186,9 +152,51 @@ export const useBillingDashboard =
       getGLQData();
     }, [called, data]);
 
+
+    useEffect(() => {
+      if (!isEmpty(firebaseId)) {
+        dispatch(getBillingFile(firebaseId));
+      }
+    }, [firebaseId]);
+
+    const downloadFile = (format: string, selectedTransactions: any[]): void => {
+      const requestIds: string[] = [];
+
+      if (selectedTransactions) {
+        selectedTransactions?.forEach(
+            (transaction: { transaction_id: string }) => {
+              if (transaction.transaction_id !== undefined)
+                requestIds.push(transaction.transaction_id);
+            }
+        );
+      }
+
+      dispatch(
+          getFirebaseId({
+            body: {
+              country: "Ecuador",
+              filter: {
+                kind: "invoice|charge|dispersion",
+              },
+              format: format,
+              from: "2023-05-03",
+              limit: 500,
+              offset: 0,
+              requestIds: [
+                "b870c344-8753-4ffc-b01c-882e061de4ab",
+                "a25c64e7-2af1-4d45-90e5-35a8037c7d71",
+              ],
+              to: "2023-06-02",
+            },
+          })
+      );
+    };
+
     return {
       allowSelection,
+      downloadFile,
       handleGetGqlData: getGLQData,
       tableRows,
     };
   };
+};

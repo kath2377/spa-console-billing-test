@@ -1,19 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IAppState } from "../../interfaces/AppState.interfaces";
-import { getNodeInfo } from "../../thunks/general/general.thunk";
+import { getFirebaseId } from "../../thunks/general/general.thunk";
 
 export const initialState: IAppState = {
-  loading: false,
-  loadingText: "",
-  showAlert: false,
-  typeAlert: "success",
-  valueTab: "1",
+  firebaseId: "",
+  isLoadingDownload: false,
 };
 
 export const appSlice = createSlice({
   extraReducers: (builder) => {
-    builder.addCase(getNodeInfo.fulfilled, (state, action) => {
-      state.nodeInfo = action.payload;
+    builder.addCase(getFirebaseId.fulfilled, (state: IAppState, action) => {
+      state.firebaseId = action.payload.id;
+      state.isLoadingDownload = false;
+    });
+    builder.addCase(getFirebaseId.rejected, (state: IAppState) => {
+      state.isLoadingDownload = false;
+    });
+    builder.addCase(getFirebaseId.pending, (state: IAppState) => {
+      state.isLoadingDownload = true;
     });
   },
   initialState,

@@ -8,14 +8,12 @@ import MainContainer from "./containers/MainContainer/MainContainer";
 import { Routes } from "./shared/constants/routes";
 
 import { store } from "./store/store";
-import { JwtComponent } from "./shared/useJWTUtils";
 import { ModuleSecurityWrapper } from "@kushki/security-wrapper";
 import { environment } from "./environments/environment";
 import { M_CLIENTS } from "./shared/constants/labels/main_containter_labels";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
-  // uri: "https://flyby-router-demo.herokuapp.com/",
   cache: new InMemoryCache(),
   uri: "http://localhost:4003/graphql",
 });
@@ -35,7 +33,6 @@ const Root = () => {
       </style>
       <ApolloProvider client={client}>
         <Provider store={store}>
-          <JwtComponent />
           <ThemeProvider theme={theme}>
             <SnackBarProvider>
               <BrowserRouter basename={"/billing"}>
