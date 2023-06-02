@@ -72,6 +72,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@apollo/client": "^3.7.15",
     "@emotion/react": "11.7.0",
     "@emotion/styled": "11.6.0",
     "@kushki/connect-ui": "0.0.106",
@@ -83,6 +84,7 @@
     "@reduxjs/toolkit": "1.7.2",
     "axios": "^0.21.1",
     "date-fns": "2.21.3",
+    "graphql": "^16.6.0",
     "lodash": "^4.17.21",
     "react": "17.0.2",
     "react-dom": "17.0.2",

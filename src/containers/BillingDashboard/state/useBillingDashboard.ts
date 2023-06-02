@@ -6,6 +6,9 @@ import {
   ITableRowProps,
 } from "../../../components/Table/TableSimple/interfaces";
 import { UseFormReturn } from "react-hook-form";
+import { gql, useLazyQuery } from "@apollo/client";
+import { defaultTo } from "lodash";
+import { useEffect, useState } from "react";
 
 export interface IMerchantCentralization {
   searchParameter: string;
@@ -40,6 +43,9 @@ export interface IUseBasicMerchantCentralization {
   filterByNameBranchId: () => void;
   form: UseFormReturn<IMerchantCentralization>;
   isCustomerComplete: boolean;
+  tableRows: ITableRowProps[];
+  allowSelection: boolean;
+  handleGetGqlData: () => void;
 }
 export interface Branch {
   nodeId: string;
@@ -47,88 +53,151 @@ export interface Branch {
   configs: Configs[];
 }
 
-export const useBillingDashboard = (): IUseBasicMerchantCentralization => {
-  const tableRows = [
-    {
-      cells: [
-        {
-          props: {
-            cellProps: {
-              align: "left",
-              spacing: 1,
-            },
-            line1: "23/03/2023",
-            type: "oneLine",
-          },
-          type: "TEXT",
-        },
-        {
-          props: {
-            cellProps: {
-              align: "left",
-              spacing: 1,
-            },
-            line1: "Ceviches de la Ruminahui",
-            type: "oneLine",
-          },
-          type: "TEXT",
-        },
-        {
-          props: {
-            cellProps: {
-              align: "left",
-              spacing: 1,
-            },
-            line1: "$2500.34 USD",
-            type: "oneLine",
-          },
-          type: "TEXT",
-        },
-        {
-          props: {
-            cellProps: {
-              spacing: 1,
-            },
-            text: "Factura",
-          },
-          type: "TAG",
-        },
-        {
-          props: {
-            cellProps: {
-              align: "left",
-              spacing: 1,
-            },
-            line1: "Pay In",
-            type: "oneLine",
-          },
-          type: "TEXT",
-        },
-        {
-          props: {
-            cellProps: {
-              spacing: 1,
-            },
-            color: "success",
-            text: "Aprobado",
-          },
-          type: "TAG",
-        },
-      ],
-      id: "1",
-      rowProps: {
-        color: "default",
-        onClick: function noRefCheck() {},
-      },
-    },
-  ];
-  tableRows.push(tableRows[0]);
-  tableRows.push(tableRows[0]);
-  tableRows.push(tableRows[0]);
-  tableRows.push(tableRows[0]);
-  tableRows.push(tableRows[0]);
-  tableRows.push(tableRows[0]);
-  tableRows.push(tableRows[0]);
+const TEMPLATE_QUERY = gql`
+  query getBills {
+    getBills {
+      created
+      social_reason
+      amount
+      iva_kushki_commission
+      invoice_amount_total
+      kind
+      transaction_type
+      status
+    }
+  }
+`;
 
-  return { tableRows };
-};
+export const useBillingDashboard =
+  (): Partial<IUseBasicMerchantCentralization> => {
+    const [getResult, { called, loading, error, data }] =
+      useLazyQuery(TEMPLATE_QUERY);
+    const [tableRows, setTableRows] = useState<ITableRowProps[]>([]);
+    const [allowSelection, setAllowSelection] = useState<boolean>(false);
+    const getGLQData = (): void => {
+      getResult();
+      if (!called || loading || error) return;
+      const tableRows: ITableRowProps[] = [];
+
+      defaultTo(data.getBills, []).forEach((d: object, index: number) => {
+        const tableRowsAux = [
+          {
+            cells: [
+              {
+                props: {
+                  cellProps: {
+                    align: "left",
+                    spacing: 1,
+                  },
+                  line1: defaultTo(d["created"], "").split("T")[0],
+                  type: "oneLine",
+                },
+                type: "TEXT",
+              },
+              {
+                props: {
+                  cellProps: {
+                    align: "left",
+                    spacing: 1,
+                  },
+                  line1: d["social_reason"],
+                  type: "oneLine",
+                },
+                type: "TEXT",
+              },
+              {
+                props: {
+                  cellProps: {
+                    align: "left",
+                    spacing: 1,
+                  },
+                  line1: defaultTo(Number(d["amount"]), 0).toFixed(2),
+                  type: "oneLine",
+                },
+                type: "TEXT",
+              },
+              {
+                props: {
+                  cellProps: {
+                    align: "left",
+                    spacing: 1,
+                  },
+                  line1: defaultTo(
+                    Number(d["iva_kushki_commission"]),
+                    0
+                  ).toFixed(2),
+                  type: "oneLine",
+                },
+                type: "TEXT",
+              },
+              {
+                props: {
+                  cellProps: {
+                    align: "left",
+                    spacing: 1,
+                  },
+                  line1: defaultTo(
+                    Number(d["invoice_amount_total"]),
+                    0
+                  ).toFixed(2),
+                  type: "oneLine",
+                },
+                type: "TEXT",
+              },
+              {
+                props: {
+                  cellProps: {
+                    spacing: 1,
+                  },
+                  text: d["kind"],
+                },
+                type: "TAG",
+              },
+              {
+                props: {
+                  cellProps: {
+                    align: "left",
+                    spacing: 1,
+                  },
+                  line1: d["transaction_type"],
+                  type: "oneLine",
+                },
+                type: "TEXT",
+              },
+              {
+                props: {
+                  cellProps: {
+                    spacing: 1,
+                  },
+                  color: "success",
+                  text: d["status"],
+                },
+                type: "TAG",
+              },
+            ],
+            id: index,
+            rowProps: {
+              color: "default",
+              onChecked: () => {},
+              onClick: function noRefCheck() {},
+            },
+          },
+        ];
+
+        tableRows.push(tableRowsAux[0]);
+      });
+
+      setTableRows(tableRows);
+      setAllowSelection(!loading || !error);
+    };
+
+    useEffect(() => {
+      getGLQData();
+    }, [called, data]);
+
+    return {
+      allowSelection,
+      handleGetGqlData: getGLQData,
+      tableRows,
+    };
+  };

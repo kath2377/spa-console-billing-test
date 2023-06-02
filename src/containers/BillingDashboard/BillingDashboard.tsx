@@ -7,10 +7,10 @@ import {
   Title,
 } from "@kushki/connect-ui";
 import { Box } from "@mui/material";
-import {useBillingDashboard} from "./state/useBillingDashboard";
+import { useBillingDashboard } from "./state/useBillingDashboard";
 
 const BillingDashboard: FC = () => {
-  const {tableRows} = useBillingDashboard();
+  const { tableRows, allowSelection, handleGetGqlData } = useBillingDashboard();
 
   return (
     <>
@@ -29,7 +29,8 @@ const BillingDashboard: FC = () => {
               url: "Facturación",
             },
           ]}
-          onButtonClick={() => {}}
+          onButtonClick={handleGetGqlData}
+          textButton="Configuración Factura"
           onButtonClickSecondary={function noRefCheck() {}}
           splitButton={
             <SplitButton
@@ -46,7 +47,7 @@ const BillingDashboard: FC = () => {
             />
           }
           title="Facturación"
-          type="withSplitButton"
+          type="withButtonIconSplitButton"
         />
       </Box>
       <Box>
@@ -194,6 +195,7 @@ const BillingDashboard: FC = () => {
           }}
         />
         <TableSimple
+          allowSelection={allowSelection}
           header={{
             cells: [
               {
@@ -201,34 +203,49 @@ const BillingDashboard: FC = () => {
                 spacing: 0,
                 text: "Fecha",
                 type: "default",
+                width: 650,
               },
               {
                 align: "left",
                 spacing: 0,
                 text: "Razón social",
                 type: "default",
+                width: 1000,
+              },
+              {
+                align: "left",
+                spacing: 0,
+                text: "Monto Bruto",
+                type: "default",
                 width: 300,
               },
               {
                 align: "left",
                 spacing: 0,
-                text: "Monto",
+                text: "Monto IVA TRX",
                 type: "default",
-                width: 400,
+                width: 300,
+              },
+              {
+                align: "left",
+                spacing: 0,
+                text: "Monto Total",
+                type: "default",
+                width: 300,
               },
               {
                 align: "left",
                 spacing: 0,
                 text: "Tipo",
                 type: "default",
-                width: 1200,
+                width: 400,
               },
               {
                 align: "left",
                 spacing: 0,
                 text: "Tipo de transacción",
                 type: "default",
-                width: 1200,
+                width: 1000,
               },
               {
                 align: "left",
@@ -242,7 +259,7 @@ const BillingDashboard: FC = () => {
             },
           }}
           onSelectedRows={() => {}}
-          rows={tableRows}
+          rows={tableRows!}
           showPagination
         />
       </Box>

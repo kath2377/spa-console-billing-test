@@ -12,6 +12,13 @@ import { JwtComponent } from "./shared/useJWTUtils";
 import { ModuleSecurityWrapper } from "@kushki/security-wrapper";
 import { environment } from "./environments/environment";
 import { M_CLIENTS } from "./shared/constants/labels/main_containter_labels";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+
+const client = new ApolloClient({
+  // uri: "https://flyby-router-demo.herokuapp.com/",
+  cache: new InMemoryCache(),
+  uri: "http://localhost:4003/graphql",
+});
 
 const Root = () => {
   return (
@@ -26,24 +33,26 @@ const Root = () => {
           "@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');"
         }
       </style>
-      <Provider store={store}>
-        <JwtComponent />
-        <ThemeProvider theme={theme}>
-          <SnackBarProvider>
-            <BrowserRouter basename={"/billing"}>
-              <ModuleSecurityWrapper
-                basePath={environment.kushkiUrl}
-                componentId={M_CLIENTS}
-              >
-                <RoutesDom>
-                  <Route path={Routes.INDEX} element={<MainContainer />} />
-                  <Route path={"*"} element={<MainContainer />} />
-                </RoutesDom>
-              </ModuleSecurityWrapper>
-            </BrowserRouter>
-          </SnackBarProvider>
-        </ThemeProvider>
-      </Provider>
+      <ApolloProvider client={client}>
+        <Provider store={store}>
+          <JwtComponent />
+          <ThemeProvider theme={theme}>
+            <SnackBarProvider>
+              <BrowserRouter basename={"/billing"}>
+                <ModuleSecurityWrapper
+                  basePath={environment.kushkiUrl}
+                  componentId={M_CLIENTS}
+                >
+                  <RoutesDom>
+                    <Route path={Routes.INDEX} element={<MainContainer />} />
+                    <Route path={"*"} element={<MainContainer />} />
+                  </RoutesDom>
+                </ModuleSecurityWrapper>
+              </BrowserRouter>
+            </SnackBarProvider>
+          </ThemeProvider>
+        </Provider>
+      </ApolloProvider>
     </React.StrictMode>
   );
 };
