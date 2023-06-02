@@ -34,169 +34,164 @@ const TEMPLATE_QUERY = gql`
   }
 `;
 
-export const useBillingDashboard =
-  (): Partial<IUseBilingDashboard> => {
-    const [getResult, { called, loading, error, data }] =
-      useLazyQuery(TEMPLATE_QUERY);
-    const dispatch = useAppDispatch();
-    const [tableRows, setTableRows] = useState<ITableRowProps[]>([]);
-    const [allowSelection, setAllowSelection] = useState<boolean>(false);
-    const { firebaseId } = useAppSelector((state: RootState) => state.app);
-    const getGLQData = (): void => {
-      getResult();
-      if (!called || loading || error) return;
-      const tableRows: ITableRowProps[] = [];
+export const useBillingDashboard = (): Partial<IUseBilingDashboard> => {
+  const [getResult, { called, loading, error, data }] =
+    useLazyQuery(TEMPLATE_QUERY);
+  const dispatch = useAppDispatch();
+  const [tableRows, setTableRows] = useState<ITableRowProps[]>([]);
+  const [allowSelection, setAllowSelection] = useState<boolean>(false);
+  const { firebaseId } = useAppSelector((state: RootState) => state.app);
+  const getGLQData = (): void => {
+    getResult();
+    if (!called || loading || error) return;
+    const tableRows: ITableRowProps[] = [];
 
-
-      defaultTo(data.getBills, []).forEach((d: object, index: number) => {
-        const tableRowsAux: ITableRowProps[] = [
-          {
-            cells: [
-              {
-                props: {
-                  cellProps: {
-                    align: "left",
-                    spacing: 1,
-                  },
-                  line1: defaultTo(d["created"], "").split("T")[0],
-                  type: "oneLine",
+    defaultTo(data.getBills, []).forEach((d: object, index: number) => {
+      const tableRowsAux: ITableRowProps[] = [
+        {
+          cells: [
+            {
+              props: {
+                cellProps: {
+                  align: "left",
+                  spacing: 1,
                 },
-                type: "TEXT",
+                line1: defaultTo(d["created"], "").split("T")[0],
+                type: "oneLine",
               },
-              {
-                props: {
-                  cellProps: {
-                    align: "left",
-                    spacing: 1,
-                  },
-                  line1: d["social_reason"],
-                  type: "oneLine",
-                },
-                type: "TEXT",
-              },
-              {
-                props: {
-                  cellProps: {
-                    align: "center",
-                    spacing: 1,
-                  },
-                  line1: d["total_transactions"],
-                  type: "oneLine",
-                },
-                type: "TEXT",
-              },
-              {
-                props: {
-                  cellProps: {
-                    align: "left",
-                    spacing: 1,
-                  },
-                  line1: defaultTo(Number(d["total_amount_trx"]), 0).toFixed(2),
-                  type: "oneLine",
-                },
-                type: "TEXT",
-              },
-              {
-                props: {
-                  cellProps: {
-                    align: "left",
-                    spacing: 1,
-                  },
-                  line1: defaultTo(
-                    Number(d["invoice_amount_total"]),
-                    0
-                  ).toFixed(2),
-                  type: "oneLine",
-                },
-                type: "TEXT",
-              },
-              {
-                props: {
-                  cellProps: {
-                    align: "left",
-                    spacing: 1,
-                  },
-                  line1: d["cycle"],
-                  type: "oneLine",
-                },
-                type: "TEXT",
-              },
-              {
-                props: {
-                  cellProps: {
-                    spacing: 1,
-                  },
-                  color: d["status"] === "completed" ? "success" : "error",
-                  text: d["status"],
-                },
-                type: "TAG",
-              },
-            ],
-            id: index,
-            rowProps: {
-              color: "default",
-              onChecked: () => {},
-              onClick: function noRefCheck() {},
+              type: "TEXT",
             },
+            {
+              props: {
+                cellProps: {
+                  align: "left",
+                  spacing: 1,
+                },
+                line1: d["social_reason"],
+                type: "oneLine",
+              },
+              type: "TEXT",
+            },
+            {
+              props: {
+                cellProps: {
+                  align: "center",
+                  spacing: 1,
+                },
+                line1: d["total_transactions"],
+                type: "oneLine",
+              },
+              type: "TEXT",
+            },
+            {
+              props: {
+                cellProps: {
+                  align: "left",
+                  spacing: 1,
+                },
+                line1: defaultTo(Number(d["total_amount_trx"]), 0).toFixed(2),
+                type: "oneLine",
+              },
+              type: "TEXT",
+            },
+            {
+              props: {
+                cellProps: {
+                  align: "left",
+                  spacing: 1,
+                },
+                line1: defaultTo(Number(d["invoice_amount_total"]), 0).toFixed(
+                  2
+                ),
+                type: "oneLine",
+              },
+              type: "TEXT",
+            },
+            {
+              props: {
+                cellProps: {
+                  align: "left",
+                  spacing: 1,
+                },
+                line1: d["cycle"],
+                type: "oneLine",
+              },
+              type: "TEXT",
+            },
+            {
+              props: {
+                cellProps: {
+                  spacing: 1,
+                },
+                color: d["status"] === "completed" ? "success" : "error",
+                text: d["status"],
+              },
+              type: "TAG",
+            },
+          ],
+          id: index,
+          rowProps: {
+            color: "default",
+            onChecked: () => {},
+            onClick: function noRefCheck() {},
           },
-        ];
+        },
+      ];
 
-        tableRows.push(tableRowsAux[0]);
-      });
+      tableRows.push(tableRowsAux[0]);
+    });
 
-      setTableRows(tableRows);
-      setAllowSelection(!loading || !error);
-    };
+    setTableRows(tableRows);
+    setAllowSelection(!loading || !error);
+  };
 
-    useEffect(() => {
-      getGLQData();
-    }, [called, data]);
+  useEffect(() => {
+    getGLQData();
+  }, [called, data]);
 
+  useEffect(() => {
+    if (!isEmpty(firebaseId)) {
+      dispatch(getBillingFile(firebaseId));
+    }
+  }, [firebaseId]);
 
-    useEffect(() => {
-      if (!isEmpty(firebaseId)) {
-        dispatch(getBillingFile(firebaseId));
-      }
-    }, [firebaseId]);
+  const downloadFile = (format: string, selectedTransactions: any[]): void => {
+    const requestIds: string[] = [];
 
-    const downloadFile = (format: string, selectedTransactions: any[]): void => {
-      const requestIds: string[] = [];
-
-      if (selectedTransactions) {
-        selectedTransactions?.forEach(
-            (transaction: { transaction_id: string }) => {
-              if (transaction.transaction_id !== undefined)
-                requestIds.push(transaction.transaction_id);
-            }
-        );
-      }
-
-      dispatch(
-          getFirebaseId({
-            body: {
-              country: "Ecuador",
-              filter: {
-                kind: "invoice|charge|dispersion",
-              },
-              format: format,
-              from: "2023-05-03",
-              limit: 500,
-              offset: 0,
-              requestIds: [
-                "b870c344-8753-4ffc-b01c-882e061de4ab",
-                "a25c64e7-2af1-4d45-90e5-35a8037c7d71",
-              ],
-              to: "2023-06-02",
-            },
-          })
+    if (selectedTransactions) {
+      selectedTransactions?.forEach(
+        (transaction: { transaction_id: string }) => {
+          if (transaction.transaction_id !== undefined)
+            requestIds.push(transaction.transaction_id);
+        }
       );
-    };
+    }
 
-    return {
-      allowSelection,
-      downloadFile,
-      handleGetGqlData: getGLQData,
-      tableRows,
-    };
+    dispatch(
+      getFirebaseId({
+        body: {
+          country: "Ecuador",
+          filter: {
+            kind: "invoice|charge|dispersion",
+          },
+          format: format,
+          from: "2023-05-03",
+          limit: 500,
+          offset: 0,
+          requestIds: [
+            "b870c344-8753-4ffc-b01c-882e061de4ab",
+            "a25c64e7-2af1-4d45-90e5-35a8037c7d71",
+          ],
+          to: "2023-06-02",
+        },
+      })
+    );
+  };
+
+  return {
+    allowSelection,
+    downloadFile,
+    handleGetGqlData: getGLQData,
+    tableRows,
   };
 };
